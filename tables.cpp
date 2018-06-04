@@ -83,30 +83,19 @@ int main(int argc, const char *argv[])
             auto &table = tables.values.at(i).get<json::Array>();
             for(int j = 0; j < table.values.size(); j++) {
                 const auto duration = table.values.at(j).get<json::Number>().value; 
+
+                // Warn users if extract does not contain the default coordinates from above
+                if (duration == 0)
+                {
+                    std::cout << "Note: distance or duration is zero. ";
+                    std::cout << "You are probably doing a query outside of the OSM extract.\n\n";
+                }
+
                 std::cout << "From origin " << i << " to destination " << j << ": " << duration
                     << " seconds." << std::endl;
             }
         }
 
-        // std::cout << test0 << ", " << test1 << std::endl;
-        // std::cout << typeid(table.values).name() << std::endl;
-
-        // Let's just use the first route
-        /*
-           auto &route = routes.values.at(0).get<json::Object>();
-           const auto distance = route.values["distance"].get<json::Number>().value;
-           const auto duration = route.values["duration"].get<json::Number>().value;
-
-        // Warn users if extract does not contain the default coordinates from above
-        if (distance == 0 || duration == 0)
-        {
-        std::cout << "Note: distance or duration is zero. ";
-        std::cout << "You are probably doing a query outside of the OSM extract.\n\n";
-        }
-
-        std::cout << "Distance: " << distance << " meter\n";
-        std::cout << "Duration: " << duration << " seconds\n";
-        */
         return EXIT_SUCCESS;
     }
     else if (status == Status::Error)
