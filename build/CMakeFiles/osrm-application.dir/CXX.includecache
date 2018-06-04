@@ -1,0 +1,38 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/fzenoni/SoTM_poster/accessibility/osrm-application/tables.cpp
+osrm/table_parameters.hpp
+/home/fzenoni/SoTM_poster/accessibility/osrm-application/osrm/table_parameters.hpp
+osrm/coordinate.hpp
+/home/fzenoni/SoTM_poster/accessibility/osrm-application/osrm/coordinate.hpp
+osrm/engine_config.hpp
+/home/fzenoni/SoTM_poster/accessibility/osrm-application/osrm/engine_config.hpp
+osrm/json_container.hpp
+/home/fzenoni/SoTM_poster/accessibility/osrm-application/osrm/json_container.hpp
+osrm/osrm.hpp
+/home/fzenoni/SoTM_poster/accessibility/osrm-application/osrm/osrm.hpp
+osrm/status.hpp
+/home/fzenoni/SoTM_poster/accessibility/osrm-application/osrm/status.hpp
+exception
+-
+iostream
+-
+string
+-
+utility
+-
+iterator
+-
+vector
+-
+algorithm
+-
+cstdlib
+-
+
