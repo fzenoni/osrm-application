@@ -56,14 +56,16 @@ int main(int argc, const char *argv[])
     TableParameters params;
 
     // Read from external file
-    int col1[4];
-    std::string col2[4];
-    double col3[4];
-    double col4[4];
+    //
+    const int nrow = 10438;
+    int col1[nrow];
+    std::string col2[nrow];
+    double col3[nrow]; // longitude
+    double col4[nrow]; // latitude
 
     int i = 0;
     std::ifstream infile;
-    infile.open("../input.txt");
+    infile.open("../big_input.txt");
     if(infile.fail()) {
         std::cout << "error" << std::endl;
         return 1;
@@ -72,7 +74,7 @@ int main(int argc, const char *argv[])
         infile >> col1[i] >> col2[i] >> col3[i] >> col4[i];
         std::cout << i << ": " << col1[i] << "," << col2[i] << "," << col3[i] << "," << col4[i] << std::endl;
 
-        params.coordinates.push_back({util::FloatLongitude{col4[i]}, util::FloatLatitude{col3[i]}});
+        params.coordinates.push_back({util::FloatLongitude{col3[i]}, util::FloatLatitude{col4[i]}});
 
         if(col2[i] == "S") {
             params.sources.push_back(col1[i]);
@@ -86,7 +88,7 @@ int main(int argc, const char *argv[])
         }
 
         ++i;
-        if(i > 3) break;
+        if(i > nrow-1) break;
     }
 
     // Table in milan
@@ -113,23 +115,30 @@ int main(int argc, const char *argv[])
         // auto &routes = result.values["routes"].get<json::Array>();
         auto &tables = result.values["durations"].get<json::Array>();
 
-        // Loop over tables values
-        for(int i = 0; i < tables.values.size(); i++) {
-            auto &table = tables.values.at(i).get<json::Array>();
-            for(int j = 0; j < table.values.size(); j++) {
-                const auto duration = table.values.at(j).get<json::Number>().value; 
+        // Write output
+        std::ofstream outfile("../output.csv");
+        if(outfile.is_open()) {
+            // Loop over tables values
+            for(int i = 0; i < tables.values.size(); i++) {
+                auto &table = tables.values.at(i).get<json::Array>();
+                for(int j = 0; j < table.values.size(); j++) {
+                    const auto duration = table.values.at(j).get<json::Number>().value; 
 
-                // Warn users if extract does not contain the default coordinates from above
-                if (duration == 0)
-                {
-                    std::cout << "Note: distance or duration is zero. ";
-                    std::cout << "You are probably doing a query outside of the OSM extract.\n\n";
+                    // Warn users if extract does not contain the default coordinates from above
+                    if (duration == 0)
+                    {
+                        std::cout << "Note: distance or duration is zero. ";
+                        std::cout << "You are probably doing a query outside of the OSM extract.\n\n";
+                    }
+
+                    outfile << i << "," << duration << "\n";
+                    // std::cout << "From origin " << i << " to destination " << j << ": " << duration
+                    //    << " seconds." << std::endl;
                 }
-
-                std::cout << "From origin " << i << " to destination " << j << ": " << duration
-                    << " seconds." << std::endl;
             }
+            outfile.close();
         }
+        else std::cout << "Unable to open file." << std::endl;
 
         return EXIT_SUCCESS;
     }
