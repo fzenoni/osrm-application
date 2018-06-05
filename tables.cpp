@@ -20,6 +20,7 @@
 #include <iterator>
 #include <vector>
 #include <algorithm>
+#include <fstream>
 
 #include <cstdlib>
 
@@ -54,17 +55,51 @@ int main(int argc, const char *argv[])
     // The following attempts to use the Table service; configure this service
     TableParameters params;
 
+    // Read from external file
+    int col1[4];
+    std::string col2[4];
+    double col3[4];
+    double col4[4];
+
+    int i = 0;
+    std::ifstream infile;
+    infile.open("../input.txt");
+    if(infile.fail()) {
+        std::cout << "error" << std::endl;
+        return 1;
+    }
+    while(!infile.eof()) {
+        infile >> col1[i] >> col2[i] >> col3[i] >> col4[i];
+        std::cout << i << ": " << col1[i] << "," << col2[i] << "," << col3[i] << "," << col4[i] << std::endl;
+
+        params.coordinates.push_back({util::FloatLongitude{col4[i]}, util::FloatLatitude{col3[i]}});
+
+        if(col2[i] == "S") {
+            params.sources.push_back(col1[i]);
+        }
+        else if(col2[i] == "D") {
+            params.destinations.push_back(col1[i]);
+        }
+        else {
+            std::cout << "Specify S(ource) or (D)estination in input file." << std::endl;
+            return 1;
+        }
+
+        ++i;
+        if(i > 3) break;
+    }
+
     // Table in milan
-    params.coordinates.push_back({util::FloatLongitude{9.1919}, util::FloatLatitude{45.4641}});
-    params.coordinates.push_back({util::FloatLongitude{9.2919}, util::FloatLatitude{45.2641}});
-    params.coordinates.push_back({util::FloatLongitude{9.2043}, util::FloatLatitude{45.4859}});
-    params.coordinates.push_back({util::FloatLongitude{9.2143}, util::FloatLatitude{45.4959}});
+    // params.coordinates.push_back({util::FloatLongitude{9.1919}, util::FloatLatitude{45.4641}});
+    // params.coordinates.push_back({util::FloatLongitude{9.2919}, util::FloatLatitude{45.2641}});
+    // params.coordinates.push_back({util::FloatLongitude{9.2043}, util::FloatLatitude{45.4859}});
+    // params.coordinates.push_back({util::FloatLongitude{9.2143}, util::FloatLatitude{45.4959}});
 
     // Define sources and destination by providing indexes
-    params.sources.push_back(0);
-    params.sources.push_back(1);
-    params.destinations.push_back(2);
-    params.destinations.push_back(3);
+    // params.sources.push_back(0);
+    // params.sources.push_back(1);
+    // params.destinations.push_back(2);
+    // params.destinations.push_back(3);
 
     // Response is in JSON format
     json::Object result;
