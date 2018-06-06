@@ -26,9 +26,9 @@
 
 int main(int argc, const char *argv[])
 {
-    if (argc < 2)
+    if (argc < 3)
     {
-        std::cerr << "Usage: " << argv[0] << " data.osrm\n";
+        std::cerr << "Usage: " << argv[0] << " input.txt data.osrm\n";
         return EXIT_FAILURE;
     }
 
@@ -37,7 +37,7 @@ int main(int argc, const char *argv[])
     // Configure based on a .osrm base path, and no datasets in shared mem from osrm-datastore
     EngineConfig config;
 
-    config.storage_config = {argv[1]};
+    config.storage_config = {argv[2]};
     config.use_shared_memory = false;
 
     // We support two routing speed up techniques:
@@ -50,8 +50,6 @@ int main(int argc, const char *argv[])
     // Routing machine with several services (such as Route, Table, Nearest, Trip, Match)
     const OSRM osrm{config};
 
-    // The following shows how to use the Route service; configure this service
-    // RouteParameters params;
     // The following attempts to use the Table service; configure this service
     TableParameters params;
 
@@ -59,7 +57,8 @@ int main(int argc, const char *argv[])
     //
     int i = 0;
     std::ifstream infile;
-    infile.open("../big_input.txt");
+    infile.open(argv[1]);
+    //infile.open("../big_input.txt");
     if(infile.fail()) {
         std::cout << "error" << std::endl;
         return 1;
@@ -85,6 +84,7 @@ int main(int argc, const char *argv[])
 
         params.coordinates.push_back({util::FloatLongitude{col3[i]}, util::FloatLatitude{col4[i]}});
 
+        // Define sources and destination by providing indexes
         if(col2[i] == "S") {
             params.sources.push_back(col1[i]);
         }
@@ -100,28 +100,14 @@ int main(int argc, const char *argv[])
         if(i > nrow-1) break;
     }
 
-    // Table in milan
-    // params.coordinates.push_back({util::FloatLongitude{9.1919}, util::FloatLatitude{45.4641}});
-    // params.coordinates.push_back({util::FloatLongitude{9.2919}, util::FloatLatitude{45.2641}});
-    // params.coordinates.push_back({util::FloatLongitude{9.2043}, util::FloatLatitude{45.4859}});
-    // params.coordinates.push_back({util::FloatLongitude{9.2143}, util::FloatLatitude{45.4959}});
-
-    // Define sources and destination by providing indexes
-    // params.sources.push_back(0);
-    // params.sources.push_back(1);
-    // params.destinations.push_back(2);
-    // params.destinations.push_back(3);
-
     // Response is in JSON format
     json::Object result;
 
     // Execute routing request, this does the heavy lifting
-    // const auto status = osrm.Route(params, result);
     const auto status = osrm.Table(params, result);
 
     if (status == Status::Ok)
     {
-        // auto &routes = result.values["routes"].get<json::Array>();
         auto &tables = result.values["durations"].get<json::Array>();
 
         // Write output
