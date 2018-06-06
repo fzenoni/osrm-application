@@ -57,12 +57,6 @@ int main(int argc, const char *argv[])
 
     // Read from external file
     //
-    const int nrow = 10438;
-    int col1[nrow];
-    std::string col2[nrow];
-    double col3[nrow]; // longitude
-    double col4[nrow]; // latitude
-
     int i = 0;
     std::ifstream infile;
     infile.open("../big_input.txt");
@@ -70,6 +64,21 @@ int main(int argc, const char *argv[])
         std::cout << "error" << std::endl;
         return 1;
     }
+
+    int number_of_lines = 0;
+    std::string line;
+    while(std::getline(infile, line)) {
+        ++number_of_lines;
+    }
+
+    const int nrow = number_of_lines;
+    int col1[nrow];
+    std::string col2[nrow];
+    float col3[nrow]; // longitude
+    float col4[nrow]; // latitude
+
+    infile.close();
+    infile.open("../big_input.txt");
     while(!infile.eof()) {
         infile >> col1[i] >> col2[i] >> col3[i] >> col4[i];
         std::cout << i << ": " << col1[i] << "," << col2[i] << "," << col3[i] << "," << col4[i] << std::endl;
