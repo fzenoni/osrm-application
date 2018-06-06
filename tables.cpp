@@ -77,7 +77,7 @@ int main(int argc, const char *argv[])
     float col4[nrow]; // latitude
 
     infile.close();
-    infile.open("../big_input.txt");
+    infile.open(argv[1]);
     while(!infile.eof()) {
         infile >> col1[i] >> col2[i] >> col3[i] >> col4[i];
         std::cout << i << ": " << col1[i] << "," << col2[i] << "," << col3[i] << "," << col4[i] << std::endl;
