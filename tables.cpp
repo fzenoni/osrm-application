@@ -58,7 +58,6 @@ int main(int argc, const char *argv[])
     int i = 0;
     std::ifstream infile;
     infile.open(argv[1]);
-    //infile.open("../big_input.txt");
     if(infile.fail()) {
         std::cout << "error" << std::endl;
         return 1;
