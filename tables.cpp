@@ -26,9 +26,9 @@
 
 int main(int argc, const char *argv[])
 {
-    if (argc < 3)
+    if (argc < 4)
     {
-        std::cerr << "Usage: " << argv[0] << " input.txt data.osrm\n";
+        std::cerr << "Usage: " << argv[0] << " input.txt output.csv data.osrm\n";
         return EXIT_FAILURE;
     }
 
@@ -37,7 +37,7 @@ int main(int argc, const char *argv[])
     // Configure based on a .osrm base path, and no datasets in shared mem from osrm-datastore
     EngineConfig config;
 
-    config.storage_config = {argv[2]};
+    config.storage_config = {argv[3]};
     config.use_shared_memory = false;
 
     // We support two routing speed up techniques:
@@ -110,7 +110,7 @@ int main(int argc, const char *argv[])
         auto &tables = result.values["durations"].get<json::Array>();
 
         // Write output
-        std::ofstream outfile("../output.csv");
+        std::ofstream outfile(argv[2]);
         if(outfile.is_open()) {
             // Loop over tables values
             for(int i = 0; i < tables.values.size(); i++) {
